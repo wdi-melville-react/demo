@@ -36,12 +36,8 @@
 	var DataHeaderRow = React.createClass({
 
 		handleClick: function(event) {
-			console.log('clicked');
-			console.log(event.target.getAttribute("data-tag"));
 			this.props.onUserInput(event.target.getAttribute("data-tag"));
 		},
-		  
-
     render: function() {
       return (
         <tr className="header-row">
@@ -49,12 +45,17 @@
         	<th onClick={this.handleClick} data-tag="city">City</th>
         	<th onClick={this.handleClick} data-tag="country">Country</th>
         	<th onClick={this.handleClick} data-tag="passengers">Annual Passengers</th>
+        	<th>Delete</th>
         </tr>
       )
     }
 	});
 
 	var DataRow = React.createClass({
+		handleDelete: function(event) {
+			console.log('handle delete');
+			this.props.deleteAirport(this.props.airport)
+		},
     render: function() {
       var name = this.props.airport.name;
       var city = this.props.airport.city;
@@ -62,10 +63,11 @@
       var passengers = this.props.airport.passengers.toLocaleString();
       return (
         <tr className="row">
-            <td>{name}</td>
-            <td>{city}</td>
-            <td>{country}</td>
-            <td className="right">{passengers}</td>
+          <td>{name}</td>
+          <td>{city}</td>
+          <td>{country}</td>
+          <td className="right">{passengers}</td>
+          <td><button onClick={this.handleDelete}>X</button></td>
         </tr>
       )
     }
@@ -137,15 +139,23 @@
     	this.refs.city.getDOMNode().value = "";
     	this.refs.country.getDOMNode().value = "";
     	this.refs.passengers.getDOMNode().value = "";
-
+	  },
+	  deleteAirport: function(airport) {
+	  	var i = this.props.airports.indexOf(airport);
+	  	if (i >= 0) {
+	  		this.props.airports.splice(i, 1);
+	  		this.setState({
+    			airports: this.props.airports
+    		});
+	  	}
 	  },
 		render: function() {
 			var rows = [];
 			console.log('rendering');
 			this.handleSort();
       this.props.airports.forEach(function(airport) {
-    		rows.push(<DataRow airport={airport} key={airport.name} />);
-      });
+    		rows.push(<DataRow airport={airport} key={airport.name} deleteAirport={this.deleteAirport} />);
+      }.bind(this));
       return (
       	<div>
 					<table id="airports">
