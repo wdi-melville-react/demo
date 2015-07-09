@@ -25,7 +25,7 @@ td {
 	border-bottom: solid black 1px;
 }
 
-#form {
+.form {
 	width: 50%;
 	float: center;
 	margin-left: auto;

@@ -34,25 +34,28 @@
 	];
 
 	var DataHeaderRow = React.createClass({
-		handleClick: function() {
-			console.log('clicked');
-			this.setState({
-				sortBy: "city"
-			})
+
+		handleClick: function(event) {
+			this.props.onUserInput(event.target.getAttribute("data-tag"));
 		},
     render: function() {
       return (
         <tr className="header-row">
-        	<th onClick={this.handleClick} ref="name">Airport Name</th>
-        	<th onClick={this.handleClick} ref="city">City</th>
-        	<th ref="country">Country</th>
-        	<th ref="passengers">Annual Passengers</th>
+        	<th onClick={this.handleClick} data-tag="name">Airport Name</th>
+        	<th onClick={this.handleClick} data-tag="city">City</th>
+        	<th onClick={this.handleClick} data-tag="country">Country</th>
+        	<th onClick={this.handleClick} data-tag="passengers">Annual Passengers</th>
+        	<th>Delete</th>
         </tr>
-      );
+      )
     }
 	});
 
 	var DataRow = React.createClass({
+		handleDelete: function(event) {
+			console.log('handle delete');
+			this.props.deleteAirport(this.props.airport)
+		},
     render: function() {
       var name = this.props.airport.name;
       var city = this.props.airport.city;
@@ -60,24 +63,24 @@
       var passengers = this.props.airport.passengers.toLocaleString();
       return (
         <tr className="row">
-            <td>{name}</td>
-            <td>{city}</td>
-            <td>{country}</td>
-            <td className="right">{passengers}</td>
+          <td>{name}</td>
+          <td>{city}</td>
+          <td>{country}</td>
+          <td className="right">{passengers}</td>
+          <td><button onClick={this.handleDelete}>X</button></td>
         </tr>
-      );
+      )
     }
 	});
 
 	var AirportBox = React.createClass({
 		getInitialState: function() {
 			return {
-				sortBy: "name"
-
+				sortBy: "name",
+				airports: DATA
 			}
 		},
-		render: function() {
-			var rows = [];
+		handleSort: function(event) {
 			switch (this.state.sortBy) {
 				case "name": this.props.airports.sort(function (a, b) {
 				  if (a.name > b.name) {
@@ -97,183 +100,86 @@
 				  }
 				  return 0;
 				}); break;
-
-
+				case "country": this.props.airports.sort(function (a, b) {
+				  if (a.country > b.country) {
+				    return 1;
+				  }
+				  if (a.country < b.country) {
+				    return -1;
+				  }
+				  return 0;
+				}); break;
+				case "passengers": this.props.airports.sort(function (a, b) {
+				  if (a.passengers < b.passengers) {
+				    return 1;
+				  }
+				  if (a.passengers > b.passengers) {
+				    return -1;
+				  }
+				  return 0;
+				}); break;
 			}
-      this.props.airports.forEach(function(airport) {
-    		rows.push(<DataRow airport={airport} key={airport.name} />);
+		},
+		handleUserInput: function(sortBy) {
+      this.setState({
+        sortBy: sortBy
       });
+    },
+    handleCreate: function() {
+    	var name = this.refs.name.getDOMNode().value;
+    	var city = this.refs.city.getDOMNode().value;
+    	var country = this.refs.country.getDOMNode().value;
+    	var passengers = this.refs.passengers.getDOMNode().value;
+    	console.log(name);
+    	this.props.airports.push({name: name,  city: city, country: country, passengers: parseInt(passengers)});
+    	this.setState({
+    		airports: this.props.airports
+    	});
+    	this.refs.name.getDOMNode().value = "";
+    	this.refs.city.getDOMNode().value = "";
+    	this.refs.country.getDOMNode().value = "";
+    	this.refs.passengers.getDOMNode().value = "";
+	  },
+	  deleteAirport: function(airport) {
+	  	var i = this.props.airports.indexOf(airport);
+	  	if (i >= 0) {
+	  		this.props.airports.splice(i, 1);
+	  		this.setState({
+    			airports: this.props.airports
+    		});
+	  	}
+	  },
+		render: function() {
+			var rows = [];
+			console.log('rendering');
+			this.handleSort();
+      this.props.airports.forEach(function(airport) {
+    		rows.push(<DataRow airport={airport} key={airport.name} deleteAirport={this.deleteAirport} />);
+      }.bind(this));
       return (
-				<table id="airports">
-	        <thead>
-	          <DataHeaderRow airports={this.props.airports} />  
-	        </thead>
-	        <tbody>
-	        	{rows}
-	        </tbody>
-	      </table>
-      );
-      // <div>
-      // 	<h4>Add a New Airport</h4>
-      //   <input type="text" id="name" placeholder="Airport name..." />
-      //   <input type="text" id="city" placeholder="Airport city..." />
-      //   <input type="text" id="country" placeholder="Airport country..." />
-      //   <input type="text" id="passengers" placeholder="Annual passengers..." />
-      //   <input
-      //     type="button"
-      //     value="Create"
-      //     onClick={this.handleClick}
-      //   />
-      // </div>
+      	<div>
+					<table id="airports">
+		        <thead>
+		          <DataHeaderRow airports={this.props.airports} onUserInput={this.handleUserInput} />  
+		        </thead>
+		        <tbody>
+		        	{rows}
+		        </tbody>
+		      </table>
+		   		<div className="form">
+		      	<h4>Add a New Airport</h4>
+		        <input type="text" ref="name" placeholder="Airport name..." />
+		        <input type="text" ref="city" placeholder="Airport city..." />
+		        <input type="text" ref="country" placeholder="Airport country..." />
+		        <input type="text" ref="passengers" placeholder="Annual passengers..." />
+		        <input type="button" value="Create" onClick={this.handleCreate} />
+        	</div>
+      	</div>
+      )
 		}
-
-
 	});
 
-
-
-	// var DataTable = React.createClass({
- //    render: function() {
- //      var rows = [];
- //      this.props.airports.forEach(function(airport) {
- //    		rows.push(<DataRow airport={airport} key={airport.name} />);
- //      });
- //      return (
- //        <table id="airports">
- //          <thead>
- //            <DataHeaderRow airports={this.props.airports} />  
- //          </thead>
- //          <tbody>
- //          	{rows}
- //          </tbody>
- //        </table>
-	//     );
-	//   }
-	// });
-
-	// var NameHeader = React.createClass({
-	// 	handleClick: function(event) {
- //    	this.props.airports.sort(function (a, b) {
-	// 		  if (a.name > b.name) {
-	// 		    return 1;
-	// 		  }
-	// 		  if (a.name < b.name) {
-	// 		    return -1;
-	// 		  }
-	// 		  // a must be equal to b
-	// 		  return 0;
-	// 		});
-	// 		console.log('clicked');
-	// 		React.render(<DataTable airports={DATA} />, document.getElementById('container'));
- //    },
-	// 	render: function() {
- //      return (
- //        <th onClick={this.handleClick}>Airport Name</th>
- //      );
- //    }
-	// });
-
-	// var CityHeader = React.createClass({	
- //    handleClick: function(event) {
- //    	this.props.airports.sort(function (a, b) {
-	// 		  if (a.city > b.city) {
-	// 		    return 1;
-	// 		  }
-	// 		  if (a.city < b.city) {
-	// 		    return -1;
-	// 		  }
-	// 		  // a must be equal to b
-	// 		  return 0;
-	// 		});
-	// 		console.log('clicked');
-	// 		React.render(<DataTable airports={DATA} />, document.getElementById('container'));
- //    },
- //    render: function() {
- //      return (
- //        <th onClick={this.handleClick}>City</th>
- //      );
- //    }
-	// });
-
-	// var CountryHeader = React.createClass({
-	// 	handleClick: function(event) {
- //    	this.props.airports.sort(function (a, b) {
-	// 		  if (a.country > b.country) {
-	// 		    return 1;
-	// 		  }
-	// 		  if (a.country < b.country) {
-	// 		    return -1;
-	// 		  }
-	// 		  // a must be equal to b
-	// 		  return 0;
-	// 		});
-	// 		console.log('clicked');
-	// 		React.render(<DataTable airports={DATA} />, document.getElementById('container'));
- //    },
-	// 	render: function() {
- //      return (  
- //        <th onClick={this.handleClick}>Country</th>
- //      );
- //    }
-	// });
-
-	// var PassengersHeader = React.createClass({
-	// 	handleClick: function(event) {
- //    	this.props.airports.sort(function (a, b) {
-	// 		  if (a.passengers < b.passengers) {
-	// 		    return 1;
-	// 		  }
-	// 		  if (a.passengers > b.passengers) {
-	// 		    return -1;
-	// 		  }
-	// 		  // a must be equal to b
-	// 		  return 0;
-	// 		});
-	// 		console.log('clicked');
-	// 		React.render(<DataTable airports={DATA} />, document.getElementById('container'));
- //    },
-	// 	render: function() {
- //      return (
- //        <th onClick={this.handleClick}>Annual Passengers</th>
- //      );
- //    }
-	// });
-
-
-
-
-	// var CreateNewAirport = React.createClass({
-	//   handleClick: function() {
-	//   	this.props.airports.push({name: $('#name').val(), city: $('#city').val(), country: $('#country').val(), passengers: $('#passengers').val() });
-	//   	$('#name').val("");
-	//   	$('#city').val("");
-	//   	$('#country').val("");
-	//   	$('#passengers').val("");
-	//   	React.render(<DataTable airports={DATA} />, document.getElementById('container'));
-	//   },
-	//   render: function() {
-	//     // The ref attribute adds a reference to the component to
-	//     // this.refs when the component is mounted.
-	//     return (
-	//       <div>
-	//       	<h4>Add a New Airport</h4>
-	//         <input type="text" id="name" placeholder="Airport name..." />
-	//         <input type="text" id="city" placeholder="Airport city..." />
-	//         <input type="text" id="country" placeholder="Airport country..." />
-	//         <input type="text" id="passengers" placeholder="Annual passengers..." />
-	//         <input
-	//           type="button"
-	//           value="Create"
-	//           onClick={this.handleClick}
-	//         />
-	//       </div>
-	//     );
-	//   }
-	// });
-
 	React.render(<AirportBox airports={DATA} />, document.getElementById('container'));
-	// React.render(<CreateNewAirport airports={DATA} />, document.getElementById('form'));
-
 
 	</script>
 
