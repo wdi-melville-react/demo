@@ -21,6 +21,10 @@ th {
 	border: solid black 1px;
 }
 
+th:hover{
+	cursor: pointer;
+}
+
 td {
 	border-bottom: solid black 1px;
 }
@@ -55,6 +59,10 @@ input[type=button] {
 	height: 25px;
 }
 
+input[type=button]:hover{
+	cursor: pointer;
+}
+
 td.right {
 	text-align: right;
 	margin-right: 5px; 
@@ -62,5 +70,9 @@ td.right {
 
 td.center {
 	text-align: center;
+}
+
+button:hover {
+	cursor: pointer;
 }
 
