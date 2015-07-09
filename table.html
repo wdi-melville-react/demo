@@ -7,11 +7,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 	<h1>World's Busiest Airports</h1>
+
+	<p>Click on column headers to sort rows</p>
 
 	<div id="container"></div>
 	<div id="form"></div>
@@ -123,7 +126,7 @@
 	var DataHeaderRow = React.createClass({
     render: function() {
       return (
-        <tr class="header-row">
+        <tr className="header-row">
           <NameHeader airports={this.props.airports} />
           <CityHeader airports={this.props.airports} />
           <CountryHeader airports={this.props.airports} />
@@ -138,13 +141,13 @@
       var name = this.props.airport.name;
       var city = this.props.airport.city;
       var country = this.props.airport.country;
-      var passengers = this.props.airport.passengers;
+      var passengers = this.props.airport.passengers.toLocaleString();
       return (
-          <tr class="row">
+          <tr className="row">
               <td>{name}</td>
               <td>{city}</td>
               <td>{country}</td>
-              <td>{passengers}</td>
+              <td className="right">{passengers}  </td>
           </tr>
       );
     }
