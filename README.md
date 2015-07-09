@@ -1,6 +1,5 @@
 # React.js
 
-## What it is:
 React is a JavaScript library designed for creating user interfaces for single-page web applications. *It's the V in MVC*
 
 ## Key Concepts:
