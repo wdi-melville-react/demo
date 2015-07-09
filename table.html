@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>React Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<h1>World's Busiest Airports</h1>
+
+	<div id="container"></div>
+	<div id="form"></div>
+
+	<script type="text/jsx">
+
+	var DATA = [
+	  {name: 'Hartsfield-Jackson', city: 'Atlanta', country: 'United States', passengers: 97488218},
+	  {name: 'Beijing Capital', city: 'Beijing', country: 'China', passengers: 87252592},
+	  {name: 'Tokyo Haneda', city: 'Tokyo', country: 'Japan', passengers: 74231497},
+	  {name: 'Heathrow', city: 'London', country: 'United Kingdom', passengers: 73729389},
+	  {name: 'Dubai International', city: 'Dubai', country: 'United Arab Emirates', passengers: 71720143},
+	  {name: "O'Hare", city: 'Chicago', country: 'United States', passengers: 71501945},
+	  {name: 'Dallas/Fort Worth International', city: 'Dallas', country: 'United States', passengers: 63349134},
+	  {name: 'Los Angeles International', city: 'Los Angeles', country: 'United States', passengers: 71111265},
+	  {name: 'Hong Kong International', city: 'Hong Kong', country: 'China', passengers: 64492907},
+	  {name: 'Charles de Gaulle', city: 'Paris', country: 'France', passengers: 64116580 }
+	];
+
+	var NameHeader = React.createClass({
+		handleClick: function(event) {
+    	this.props.airports.sort(function (a, b) {
+			  if (a.name > b.name) {
+			    return 1;
+			  }
+			  if (a.name < b.name) {
+			    return -1;
+			  }
+			  // a must be equal to b
+			  return 0;
+			});
+			console.log('clicked');
+			React.render(<DataTable airports={DATA} />, document.getElementById('container'));
+    },
+		render: function() {
+      return (
+        <th onClick={this.handleClick}>Airport Name</th>
+      );
+    }
+	});
+
+	var CityHeader = React.createClass({	
+    handleClick: function(event) {
+    	this.props.airports.sort(function (a, b) {
+			  if (a.city > b.city) {
+			    return 1;
+			  }
+			  if (a.city < b.city) {
+			    return -1;
+			  }
+			  // a must be equal to b
+			  return 0;
+			});
+			console.log('clicked');
+			React.render(<DataTable airports={DATA} />, document.getElementById('container'));
+    },
+    render: function() {
+      return (
+        <th onClick={this.handleClick}>City</th>
+      );
+    }
+	});
+
+	var CountryHeader = React.createClass({
+		handleClick: function(event) {
+    	this.props.airports.sort(function (a, b) {
+			  if (a.country > b.country) {
+			    return 1;
+			  }
+			  if (a.country < b.country) {
+			    return -1;
+			  }
+			  // a must be equal to b
+			  return 0;
+			});
+			console.log('clicked');
+			React.render(<DataTable airports={DATA} />, document.getElementById('container'));
+    },
+		render: function() {
+      return (  
+        <th onClick={this.handleClick}>Country</th>
+      );
+    }
+	});
+
+	var PassengersHeader = React.createClass({
+		handleClick: function(event) {
+    	this.props.airports.sort(function (a, b) {
+			  if (a.passengers < b.passengers) {
+			    return 1;
+			  }
+			  if (a.passengers > b.passengers) {
+			    return -1;
+			  }
+			  // a must be equal to b
+			  return 0;
+			});
+			console.log('clicked');
+			React.render(<DataTable airports={DATA} />, document.getElementById('container'));
+    },
+		render: function() {
+      return (
+        <th onClick={this.handleClick}>Annual Passengers</th>
+      );
+    }
+	});
+
+
+	var DataHeaderRow = React.createClass({
+    render: function() {
+      return (
+        <tr class="header-row">
+          <NameHeader airports={this.props.airports} />
+          <CityHeader airports={this.props.airports} />
+          <CountryHeader airports={this.props.airports} />
+          <PassengersHeader airports={this.props.airports} />
+        </tr>
+      );
+    }
+	});
+
+	var DataRow = React.createClass({
+    render: function() {
+      var name = this.props.airport.name;
+      var city = this.props.airport.city;
+      var country = this.props.airport.country;
+      var passengers = this.props.airport.passengers;
+      return (
+          <tr class="row">
+              <td>{name}</td>
+              <td>{city}</td>
+              <td>{country}</td>
+              <td>{passengers}</td>
+          </tr>
+      );
+    }
+	});
+
+	var DataTable = React.createClass({
+    render: function() {
+      var rows = [];
+      this.props.airports.forEach(function(airport) {
+    		rows.push(<DataRow airport={airport} key={airport.name} />);
+      });
+      return (
+        <table id="airports">
+          <thead>
+            <DataHeaderRow airports={this.props.airports} />  
+          </thead>
+          <tbody>
+          	{rows}
+          </tbody>
+        </table>
+	    );
+	  }
+	});
+
+	var CreateNewAirport = React.createClass({
+	  handleClick: function() {
+	  	this.props.airports.push({name: $('#name').val(), city: $('#city').val(), country: $('#country').val(), passengers: $('#passengers').val() });
+	  	$('#name').val("");
+	  	$('#city').val("");
+	  	$('#country').val("");
+	  	$('#passengers').val("");
+	  	React.render(<DataTable airports={DATA} />, document.getElementById('container'));
+	  },
+	  render: function() {
+	    // The ref attribute adds a reference to the component to
+	    // this.refs when the component is mounted.
+	    return (
+	      <div>
+	      	<h4>Add a New Airport</h4>
+	        <input type="text" id="name" placeholder="Airport name..." />
+	        <input type="text" id="city" placeholder="Airport city..." />
+	        <input type="text" id="country" placeholder="Airport country..." />
+	        <input type="text" id="passengers" placeholder="Annual passengers..." />
+	        <input
+	          type="button"
+	          value="Create"
+	          onClick={this.handleClick}
+	        />
+	      </div>
+	    );
+	  }
+	});
+
+	React.render(<DataTable airports={DATA} />, document.getElementById('container'));
+	React.render(<CreateNewAirport airports={DATA} />, document.getElementById('form'));
+
+
+	</script>
+
+	
+</body>
+</html>
