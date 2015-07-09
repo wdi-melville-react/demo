@@ -60,3 +60,7 @@ td.right {
 	margin-right: 5px; 
 }
 
+td.center {
+	text-align: center;
+}
+
