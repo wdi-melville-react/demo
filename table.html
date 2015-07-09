@@ -34,11 +34,17 @@
 	];
 
 	var DataHeaderRow = React.createClass({
+		handleClick: function() {
+			console.log('clicked');
+			this.setState({
+				sortBy: "city"
+			})
+		},
     render: function() {
       return (
         <tr className="header-row">
-        	<th ref="name">Airport Name</th>
-        	<th ref="city">City</th>
+        	<th onClick={this.handleClick} ref="name">Airport Name</th>
+        	<th onClick={this.handleClick} ref="city">City</th>
         	<th ref="country">Country</th>
         	<th ref="passengers">Annual Passengers</th>
         </tr>
@@ -64,37 +70,61 @@
 	});
 
 	var AirportBox = React.createClass({
-		// getInitialState: function() {
-		// 	return {
-		// 		// airports = DATA;
+		getInitialState: function() {
+			return {
+				sortBy: "name"
 
-		// 	}
-		// },
+			}
+		},
 		render: function() {
 			var rows = [];
+			switch (this.state.sortBy) {
+				case "name": this.props.airports.sort(function (a, b) {
+				  if (a.name > b.name) {
+				    return 1;
+				  }
+				  if (a.name < b.name) {
+				    return -1;
+				  }
+				  return 0;
+				}); break;
+				case "city": this.props.airports.sort(function (a, b) {
+				  if (a.city > b.city) {
+				    return 1;
+				  }
+				  if (a.city < b.city) {
+				    return -1;
+				  }
+				  return 0;
+				}); break;
+
+
+			}
       this.props.airports.forEach(function(airport) {
     		rows.push(<DataRow airport={airport} key={airport.name} />);
       });
-			<table id="airports">
-        <thead>
-          <DataHeaderRow airports={this.props.airports} />  
-        </thead>
-        <tbody>
-        	{rows}
-        </tbody>
-      </table>
-      <div>
-      	<h4>Add a New Airport</h4>
-        <input type="text" id="name" placeholder="Airport name..." />
-        <input type="text" id="city" placeholder="Airport city..." />
-        <input type="text" id="country" placeholder="Airport country..." />
-        <input type="text" id="passengers" placeholder="Annual passengers..." />
-        <input
-          type="button"
-          value="Create"
-          onClick={this.handleClick}
-        />
-      </div>
+      return (
+				<table id="airports">
+	        <thead>
+	          <DataHeaderRow airports={this.props.airports} />  
+	        </thead>
+	        <tbody>
+	        	{rows}
+	        </tbody>
+	      </table>
+      );
+      // <div>
+      // 	<h4>Add a New Airport</h4>
+      //   <input type="text" id="name" placeholder="Airport name..." />
+      //   <input type="text" id="city" placeholder="Airport city..." />
+      //   <input type="text" id="country" placeholder="Airport country..." />
+      //   <input type="text" id="passengers" placeholder="Annual passengers..." />
+      //   <input
+      //     type="button"
+      //     value="Create"
+      //     onClick={this.handleClick}
+      //   />
+      // </div>
 		}
 
 
