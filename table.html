@@ -34,46 +34,7 @@
 	  {name: 'Charles de Gaulle', city: 'Paris', country: 'France', passengers: 64116580 }
 	];
 
-	var DataHeaderRow = React.createClass({
-
-		handleClick: function(event) {
-			this.props.onUserInput(event.target.getAttribute("data-tag"));
-		},
-    render: function() {
-      return (
-        <tr className="header-row">
-        	<th onClick={this.handleClick} data-tag="name">Airport Name</th>
-        	<th onClick={this.handleClick} data-tag="city">City</th>
-        	<th onClick={this.handleClick} data-tag="country">Country</th>
-        	<th onClick={this.handleClick} data-tag="passengers">Annual Passengers</th>
-        	<th>Delete</th>
-        </tr>
-      )
-    }
-	});
-
-	var DataRow = React.createClass({
-		handleDelete: function(event) {
-			console.log('handle delete');
-			this.props.deleteAirport(this.props.airport)
-		},
-    render: function() {
-      var name = this.props.airport.name;
-      var city = this.props.airport.city;
-      var country = this.props.airport.country;
-      var passengers = this.props.airport.passengers.toLocaleString();
-      return (
-        <tr className="row">
-          <td>{name}</td>
-          <td>{city}</td>
-          <td>{country}</td>
-          <td className="right">{passengers}</td>
-          <td className="center"><button onClick={this.handleDelete}>X</button></td>
-        </tr>
-      )
-    }
-	});
-
+	
 	var AirportBox = React.createClass({
 		getInitialState: function() {
 			return {
@@ -179,6 +140,47 @@
       )
 		}
 	});
+
+	var DataHeaderRow = React.createClass({
+
+		handleClick: function(event) {
+			this.props.onUserInput(event.target.getAttribute("data-tag"));
+		},
+    render: function() {
+      return (
+        <tr className="header-row">
+        	<th onClick={this.handleClick} data-tag="name">Airport Name &darr;</th>
+        	<th onClick={this.handleClick} data-tag="city">City &darr;</th>
+        	<th onClick={this.handleClick} data-tag="country">Country &darr;</th>
+        	<th onClick={this.handleClick} data-tag="passengers">Annual Passengers &darr;</th>
+        	<th>Delete</th>
+        </tr>
+      )
+    }
+	});
+
+	var DataRow = React.createClass({
+		handleDelete: function(event) {
+			console.log('handle delete');
+			this.props.deleteAirport(this.props.airport)
+		},
+    render: function() {
+      var name = this.props.airport.name;
+      var city = this.props.airport.city;
+      var country = this.props.airport.country;
+      var passengers = this.props.airport.passengers.toLocaleString();
+      return (
+        <tr className="row">
+          <td>{name}</td>
+          <td>{city}</td>
+          <td>{country}</td>
+          <td className="right">{passengers}</td>
+          <td className="center"><button onClick={this.handleDelete}>X</button></td>
+        </tr>
+      )
+    }
+	});
+
 
 	React.render(<AirportBox airports={DATA} />, document.getElementById('container'));
 
